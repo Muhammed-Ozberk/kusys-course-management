@@ -1,6 +1,7 @@
 // Importing necessary modules
 const config = require('../config/config'); // Importing configuration settings
 const jwt = require('jsonwebtoken'); // Importing the JWT module
+const bcrypt = require('bcrypt');
 
 // Importing DB Models
 const allModels = require("./../models"); // Loading all DB models
@@ -30,12 +31,15 @@ module.exports = {
             }
 
             // If password matches
-            if (user.password === password) {
+            if (await bcrypt.compare(password, user.password)) {
                 // Creating a JWT token
                 const token = jwt.sign({ id: user.studentID, isAdmin: user.isAdmin }, config.jwt.secretKey, config.jwt.options);
                 
+                const safeUser = user.toJSON ? user.toJSON() : { ...user };
+                delete safeUser.password;
+
                 // Responding with token and user data
-                return res.status(200).json({ status: true, error: null, data: { token: token, user: user } });
+                return res.status(200).json({ status: true, error: null, data: { token: token, user: safeUser } });
             } else {
                 // Password is incorrect
                 return res.status(400).json({ status: false, error: 'Password is incorrect!', data: null });

@@ -1,5 +1,7 @@
 'use strict';
 
+const bcrypt = require('bcrypt');
+
 /** 
  * This script is a Sequelize migration.
  * It defines how to insert initial user data into the 'Users' table and how to roll it back.
@@ -8,6 +10,7 @@
 module.exports = {
   // The 'up' function defines how to insert initial user data into the 'Users' table
   async up(queryInterface, Sequelize) {
+    const password = await bcrypt.hash('1234', 10);
     await queryInterface.bulkInsert('Users', [
       // Inserting predefined user records
       {
@@ -15,7 +18,7 @@ module.exports = {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: true,
         createdAt: new Date(),
@@ -26,7 +29,7 @@ module.exports = {
         firstName: 'Jane',
         lastName: 'Doe',
         email: 'jane@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),
@@ -37,7 +40,7 @@ module.exports = {
         firstName: 'James',
         lastName: 'Doe',
         email: 'james@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),
@@ -48,7 +51,7 @@ module.exports = {
         firstName: 'Janet',
         lastName: 'Doe',
         email: 'janet@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),
@@ -59,7 +62,7 @@ module.exports = {
         firstName: 'Judy',
         lastName: 'Doe',
         email: 'judy@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),
@@ -70,7 +73,7 @@ module.exports = {
         firstName: 'Jill',
         lastName: 'Doe',
         email: 'jill@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),
@@ -81,7 +84,7 @@ module.exports = {
         firstName: 'Jack',
         lastName: 'Doe',
         email: 'jack@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),
@@ -92,7 +95,7 @@ module.exports = {
         firstName: 'Jenny',
         lastName: 'Doe',
         email: 'jenny@example.com',
-        password: '1234',
+        password,
         birthDay: '1999-01-01',
         isAdmin: false,
         createdAt: new Date(),

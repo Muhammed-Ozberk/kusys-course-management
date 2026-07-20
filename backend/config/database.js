@@ -1,27 +1,18 @@
 require('dotenv').config();
+
+const shared = {
+    username: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    database: process.env.DB_NAME || 'kusys',
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: Number(process.env.DB_PORT || 5432),
+    dialect: 'postgres',
+    timezone: '+03:00',
+    seederStorage: 'sequelize'
+};
+
 module.exports = {
-    "development": {
-        "username": "postgres",
-        "password": "kahramanmaras46",
-        "database": "kusys",
-        "host": "127.0.0.1",
-        "dialect": "postgres",
-        "timezone": "+03:00"
-    },
-    "test": {
-        "username": "root",
-        "password": null,
-        "database": "database_test",
-        "host": "127.0.0.1",
-        "dialect": "mysql",
-        "timezone": "+03:00"
-    },
-    "production": {
-        "username": "root",
-        "password": null,
-        "database": "database_production",
-        "host": "127.0.0.1",
-        "dialect": "mysql",
-        "timezone": "+03:00"
-    }
+    development: shared,
+    test: { ...shared, database: process.env.DB_NAME || 'kusys_test' },
+    production: shared
 };

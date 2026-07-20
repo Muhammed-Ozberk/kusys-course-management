@@ -1,101 +1,82 @@
-# KUSYS-Demo
+# kusys-course-management
 
-A web project that works according to different authorizations, where you can choose a course and perform CRUD operations.
+Öğrenci ve ders eşleştirmelerini yönetmek için geliştirilmiş, JWT tabanlı kimlik doğrulama ve rol yetkilendirmesi kullanan bir web uygulamasıdır. React arayüzü, Express API'si ve PostgreSQL veritabanından oluşur.
 
-## Screenshots
+## Özellikler
 
-Here are some screenshots from the project:
+- Öğrenci ve yönetici girişi
+- JWT ile korunan API uçları
+- Yalnızca yöneticilere açık öğrenci ekleme, güncelleme ve silme işlemleri
+- Öğrencileri derslerle eşleştirme
+- Docker Compose ile tek komutla kurulum
+- Auth ve rol yetkilendirme testleri
 
-![Screenshot 1](screenshots/1.png)
-*Main admin screen*
+## Ekran görüntüleri
 
-![Screenshot 2](screenshots/2.png)
-*course selection screen*
+| Eşleştirilen öğrenciler | Ders eşleştirme |
+| --- | --- |
+| <img src="./screenshots/1.png" alt="Eşleştirilen öğrenciler ekranı" width="760"> | <img src="./screenshots/2.png" alt="Ders eşleştirme penceresi" width="480"> |
 
-## Getting Started
+## Docker ile çalıştırma
 
-These steps include the basic instructions to run the project on your local machine and start developing.
+Gereksinimler: Docker ve Docker Compose.
 
-### Prerequisites
+```sh
+git clone https://github.com/Muhammed-Ozberk/kusys-course-management.git
+cd kusys-course-management
+docker compose up --build
+```
 
-Make sure you have the following software installed to start the project:
+Uygulama `http://localhost:3000`, API ise `http://localhost:8080` adresinde çalışır. PostgreSQL migrasyonları ve örnek veriler ilk çalıştırmada otomatik olarak yüklenir.
 
-- Node.js
-- PostgreSQL
+Örnek hesaplar:
 
-### Installation
+| Rol | E-posta | Parola |
+| --- | --- | --- |
+| Yönetici | `john@example.com` | `1234` |
+| Öğrenci | `jane@example.com` | `1234` |
 
-1. Clone the project repository to your local machine:
+Servisleri durdurmak için `docker compose down`, veritabanı hacmini de silerek temiz bir başlangıç yapmak için `docker compose down --volumes` kullanabilirsiniz.
+
+## Yerel geliştirme
+
+Node.js 20+ ve PostgreSQL 16+ gereklidir.
+
+1. Ortam ayarlarını hazırlayın:
 
    ```sh
-   git clone https://github.com/Muhammed-Ozberk/KUSYS-DEMO.git
+   cp backend/.env.example backend/.env
    ```
 
-2. Navigate to the project folder:
-
-   ```sh
-   cd project-name
-   ```
-
-3. Install the required dependencies for the backend:
-
-   ```sh
-   cd backend
-   npm install
-   ```
-
-4. Create a PostgreSQL database and update the connection settings in the backend/config/database.js file.
-
-   ```json
-   // backend/config/database.js
-   {
-     "development": {
-        "username": "username",
-        "password": "password",
-        "database": "database_name",
-        "host": "localhost",
-        "dialect": "postgres"
-      }
-   }
-
-   ```
-
-5. After updating the database, use the following commands to create the database tables:
+2. Backend'i kurup veritabanını hazırlayın:
 
    ```sh
    cd backend
-   npx sequelize-cli --config=config/database.js db:create
-   npx sequelize-cli --config=config/database.js db:migrate
-   ```
-
-6. Start the backend server:
-
-   ```sh
-   cd backend
+   npm ci
+   npm run db:migrate
+   npm run db:seed
    npm start
    ```
 
-7. Open a new terminal window, navigate to the project folder, and install the required dependencies for the frontend:
-  
-   ```sh
-   cd frontend
-   npm install
-   ```
-
-8. Start the frontend application:
+3. Ayrı bir terminalde frontend'i başlatın:
 
    ```sh
    cd frontend
+   npm ci
    npm start
    ```
 
-9. To view the application in your browser, visit the following URL:
+Frontend API adresini değiştirmek için `frontend/.env` dosyasına `VITE_API_URL=http://localhost:8080` ekleyebilirsiniz.
 
-   ```arduino
-   http://localhost:3000
-   ```
+## Testler
 
+Backend auth ve rol yetkilendirme testleri gerçek bir veritabanına ihtiyaç duymaz:
 
-## License
+```sh
+cd backend
+npm test
+```
 
-[MIT]
+## Lisans
+
+Bu proje [MIT Lisansı](./LICENSE) ile lisanslanmıştır.

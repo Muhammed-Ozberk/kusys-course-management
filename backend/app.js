@@ -15,10 +15,6 @@ const tokenMiddleware = require('./middlewares/tokenMiddleware');
 
 var app = express();
 
-// View engine setup (using Twig)
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'twig');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -27,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 // Routes
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 app.use('/', authRouter);
 
 // Middleware to check JWT token
@@ -43,13 +40,11 @@ app.use(function(req, res, next) {
 
 // Error handler
 app.use(function(err, req, res, next) {
-  // Set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // Render the error page
-  res.status(err.status || 500);
-  res.render('error'); // Assuming you have a Twig template named 'error'
+  res.status(err.status || 500).json({
+    status: false,
+    error: err.message,
+    data: null
+  });
 });
 
 module.exports = app;

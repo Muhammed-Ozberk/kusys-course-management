@@ -44,8 +44,8 @@ const DetailStudentPopup = ({ student, isAdmin, onClose, onUpdate, onDelete }) =
   const handleDelete = async () => {
     try {
       // Sending delete request using Axios
-      await axios.get(
-        `${baseUrl}/users/delete/${student.studentID}`, // Add API URL here
+      await axios.delete(
+        `${baseUrl}/users/${student.studentID}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('authToken')}` // Adding JWT token

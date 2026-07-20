@@ -62,7 +62,7 @@ function CourseMatching({ isAdmin, onClose, onMatch }) {
             const [courseID, courseName] = selectedCourseForMatching.split('+');
             
             // Send POST request to match student with course
-            axios.post('http://localhost:8080/courses/create', {
+            axios.post(`${baseUrl}/courses/create`, {
                 studentID: studentID,
                 firstName: firstName,
                 courseID: courseID,

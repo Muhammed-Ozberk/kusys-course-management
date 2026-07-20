@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 module.exports = {
-    "jwt": {
-        "secretKey": "7T#p$rM9@2vF5qK8sN4u7x!A%D*G-KaPdSgVkYp3s6v9y$B&E)H@McQfTjWnZr4u",
-        "options": {
-            "expiresIn": "1h"
+    jwt: {
+        secretKey: process.env.JWT_SECRET || 'development-only-secret-change-me',
+        options: {
+            expiresIn: process.env.JWT_EXPIRES_IN || '1h'
         }
-    },
-}
+    }
+};

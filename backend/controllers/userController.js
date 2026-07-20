@@ -1,7 +1,14 @@
 // Importing necessary modules and models
-const { v4: uuidv4 } = require('uuid'); // Generating UUIDs
+const { randomUUID } = require('crypto');
+const bcrypt = require('bcrypt');
 const allModels = require("./../models"); // Loading all DB models
 const Users = allModels.Users; // Assuming "Users" is a model for users
+
+const withoutPassword = user => {
+    const value = user.toJSON ? user.toJSON() : { ...user };
+    delete value.password;
+    return value;
+};
 
 module.exports = {
     // Handler for GET /users
@@ -14,6 +21,7 @@ module.exports = {
             users.forEach(user => {
                 delete user.dataValues.isAdmin;
                 delete user.dataValues.id;
+                delete user.dataValues.password;
                 delete user.dataValues.createdAt;
                 delete user.dataValues.updatedAt;
             });
@@ -58,30 +66,26 @@ module.exports = {
     // Handler for POST /users/create
     userCreate: async function (req, res) {
         const { firstName, lastName, email, password, birthDay } = req.body;
-        const isAdmin = req.decoded.isAdmin;
-        
-        // Validating input data and admin authority
-        if (!isAdmin) {
-            return res.status(400).json({ status: false, error: 'Admin authority required!', data: null });
-        }
+        // Admin authorization is enforced by the route middleware.
         if (!firstName || !lastName || !email || !password || !birthDay) {
             return res.status(400).json({ status: false, error: 'All fields are required!', data: null });
         }
         
         try {
+            const hashedPassword = await bcrypt.hash(password, 10);
             // Creating a new user
             const user = await Users.create({
-                studentID: uuidv4(), // Generating a unique student ID using UUID
+                studentID: randomUUID(),
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
-                password: password,
+                password: hashedPassword,
                 birthDay: birthDay,
                 isAdmin: false // Assuming the created user is not an admin
             });
             
             // Responding with the created user's data
-            return res.status(200).json({ status: true, error: null, data: user });
+            return res.status(200).json({ status: true, error: null, data: withoutPassword(user) });
         } catch (error) {
             return res.status(500).json({ status: false, error: error, data: null });
         }
@@ -91,14 +95,10 @@ module.exports = {
     userUpdate: async function (req, res) {
         const userID = req.params.id;
         const { firstName, lastName, email, password, birthDay } = req.body;
-        const isAdmin = req.decoded.isAdmin;
         
         // Validating input data and admin authority
         if (!userID) {
             return res.status(400).json({ status: false, error: 'User ID is required!', data: null });
-        }
-        if (!isAdmin) {
-            return res.status(400).json({ status: false, error: 'Admin authority required!', data: null });
         }
         
         try {
@@ -109,32 +109,31 @@ module.exports = {
             }
             
             // Updating user data
-            await user.update({
+            const updates = {
                 firstName: firstName,
                 lastName: lastName,
                 email: email,
-                password: password,
                 birthDay: birthDay,
-            });
+            };
+            if (password) {
+                updates.password = await bcrypt.hash(password, 10);
+            }
+            await user.update(updates);
             
             // Responding with the updated user's data
-            return res.status(200).json({ status: true, error: null, data: user });
+            return res.status(200).json({ status: true, error: null, data: withoutPassword(user) });
         } catch (error) {
             return res.status(500).json({ status: false, error: error, data: null });
         }
     },
     
-    // Handler for GET /users/delete/:id
+    // Handler for DELETE /users/:id
     userDelete: async function (req, res) {
         const userID = req.params.id;
-        const isAdmin = req.decoded.isAdmin;
         
         // Validating user ID and admin authority
         if (!userID) {
             return res.status(400).json({ status: false, error: 'User ID is required!', data: null });
-        }
-        if (!isAdmin) {
-            return res.status(400).json({ status: false, error: 'Admin authority required!', data: null });
         }
         
         try {
@@ -148,7 +147,7 @@ module.exports = {
             await user.destroy();
             
             // Responding with the deleted user's data
-            return res.status(200).json({ status: true, error: null, data: user });
+            return res.status(200).json({ status: true, error: null, data: withoutPassword(user) });
         } catch (error) {
             console.log(error);
             return res.status(500).json({ status: false, error: error, data: null });

@@ -1,5 +1,7 @@
 # kusys-course-management
 
+[![CI](https://github.com/Muhammed-Ozberk/kusys-course-management/actions/workflows/ci.yml/badge.svg)](https://github.com/Muhammed-Ozberk/kusys-course-management/actions/workflows/ci.yml)
+
 Öğrenci ve ders eşleştirmelerini yönetmek için geliştirilmiş, JWT tabanlı kimlik doğrulama ve rol yetkilendirmesi kullanan bir web uygulamasıdır. React arayüzü, Express API'si ve PostgreSQL veritabanından oluşur.
 
 ## Özellikler
